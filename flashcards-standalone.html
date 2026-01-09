@@ -21,15 +21,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: clamp(5px, 2vw, 20px);
 }
 
 .container {
     width: 100%;
     max-width: 800px;
     background: white;
-    border-radius: 20px;
-    padding: 30px;
+    border-radius: clamp(10px, 3vw, 20px);
+    padding: clamp(15px, 3vw, 30px);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
@@ -154,18 +154,21 @@ h1 {
 }
 
 .card-content {
-    font-size: clamp(1em, 3vw, 1.5em);
-    line-height: 1.6;
+    font-size: clamp(0.85em, 2.5vw, 1.3em);
+    line-height: 1.5;
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     white-space: pre-line;
-    padding: clamp(10px, 3vw, 20px);
+    padding: clamp(10px, 2.5vw, 20px);
     width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     overflow-wrap: break-word;
     word-wrap: break-word;
+    word-break: break-word;
+    -webkit-overflow-scrolling: touch;
 }
 
 .flashcard-front .card-content {
@@ -186,9 +189,10 @@ h1 {
 
 .controls {
     display: flex;
-    gap: 15px;
+    gap: clamp(5px, 2vw, 15px);
     justify-content: center;
     margin-bottom: 20px;
+    flex-wrap: nowrap;
 }
 
 .button-group {
@@ -227,14 +231,15 @@ h1 {
 }
 
 .btn {
-    padding: clamp(10px, 2vw, 12px) clamp(15px, 3vw, 25px);
+    padding: clamp(8px, 2vw, 12px) clamp(10px, 2.5vw, 25px);
     border: none;
-    border-radius: 10px;
-    font-size: clamp(0.9em, 2vw, 1em);
+    border-radius: clamp(6px, 2vw, 10px);
+    font-size: clamp(0.75em, 2vw, 1em);
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
 }
 
 .btn:hover {
@@ -296,30 +301,57 @@ h1 {
 
 @media (max-width: 600px) {
     body {
-        padding: 10px;
+        padding: 5px;
     }
 
     .container {
-        padding: 15px;
-        border-radius: 15px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    h1 {
+        margin-bottom: 15px;
     }
 
     .flashcard {
-        height: clamp(280px, 55vh, 350px);
+        height: clamp(300px, 60vh, 380px);
     }
 
-    .controls, .button-group {
-        flex-wrap: wrap;
+    .card-content {
+        font-size: clamp(0.8em, 2.2vw, 1.1em);
+        padding: 12px;
+        justify-content: flex-start;
     }
 
-    .btn {
-        flex: 1 1 auto;
-        min-width: 100px;
+    .controls {
+        gap: 6px;
+        margin-bottom: 15px;
+    }
+
+    .controls .btn {
+        padding: 8px 10px;
+        font-size: 0.75em;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .button-group {
+        gap: 10px;
+    }
+
+    .button-group .btn {
+        font-size: 0.85em;
+        padding: 10px 15px;
     }
 
     .stats {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .stat-value {
+        font-size: 1.3em;
     }
 
     .category-selector {
@@ -330,6 +362,26 @@ h1 {
     .category-selector select {
         width: 100%;
         max-width: 250px;
+        font-size: 0.9em;
+    }
+
+    .progress-bar {
+        height: 25px;
+        margin-bottom: 20px;
+    }
+
+    .progress-text {
+        font-size: 0.8em;
+    }
+
+    .flip-hint {
+        font-size: 0.7em;
+        margin-top: 8px;
+    }
+
+    .toggle-known label {
+        font-size: 0.9em;
+        padding: 8px 15px;
     }
 }
     </style>
