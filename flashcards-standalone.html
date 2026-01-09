@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ellen's Steekkaarten">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea'/><text x='50' y='60' font-size='50' text-anchor='middle' fill='white'>📚</text></svg>">
+    <title>Ellen's Steekkaarten - Bachelor</title>
+    <style>* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: #667eea;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.category-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.category-selector label {
+    font-weight: bold;
+    color: #555;
+}
+
+.category-selector select {
+    padding: 8px 15px;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    background: white;
+    color: #333;
+}
+
+.progress-bar {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    background: #e0e0e0;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.flashcard-container {
+    perspective: 1000px;
+    margin-bottom: 30px;
+}
+
+.flashcard {
+    width: 100%;
+    height: 400px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.flashcard.known .flashcard-front {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.flashcard.known .flashcard-back {
+    background: linear-gradient(135deg, #06a77d 0%, #32d66f 100%);
+}
+
+.flashcard-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.flashcard-front {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.flashcard-back {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.card-content {
+    font-size: 1.5em;
+    line-height: 1.8;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    white-space: pre-line;
+    padding: 20px;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.flashcard-front .card-content {
+    text-align: center;
+    align-items: center;
+}
+
+.flashcard-back .card-content {
+    text-align: left;
+    align-items: flex-start;
+}
+
+.flip-hint {
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-top: 20px;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.toggle-known {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.toggle-known label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #555;
+    padding: 10px 20px;
+    background: #f5f5f5;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+.toggle-known label:hover {
+    background: #e8e8e8;
+}
+
+.toggle-known input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    flex: 1;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+    flex: 1;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .flashcard {
+        height: 350px;
+    }
+
+    .card-content {
+        font-size: 1.2em;
+    }
+
+    .controls, .button-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ellen's Steekkaarten</h1>
+            <div class="category-selector">
+                <label for="category">Categorie:</label>
+                <select id="category">
+                    <option value="dermatologie">Dermatologie</option>
+                    <option value="endocrinologie">Endocrinologie</option>
+                    <option value="gastro">Gastro-enterologie</option>
+                    <option value="respiratoir">Respiratoir</option>
+                    <option value="uronefrologie">Uro-nefrologie</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+            <span class="progress-text" id="progressText">0 / 0</span>
+        </div>
+
+        <div class="flashcard-container">
+            <div class="flashcard" id="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="card-content" id="frontContent">
+                            Klik om te starten
+                        </div>
+                        <div class="flip-hint">Klik om te draaien</div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="card-content" id="backContent">
+                            Antwoord
+                        </div>
+                        <div class="flip-hint">Klik om terug te draaien</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="prevBtn" class="btn btn-secondary">&larr; Vorige</button>
+            <button id="shuffleBtn" class="btn btn-secondary">&#128256; Shuffle</button>
+            <button id="nextBtn" class="btn btn-primary">Volgende &rarr;</button>
+        </div>
+
+        <div class="toggle-known">
+            <label>
+                <input type="checkbox" id="hideKnownToggle">
+                <span>Verberg gekende kaarten</span>
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button id="knowBtn" class="btn btn-success">&#10003; Ik weet het</button>
+            <button id="dontKnowBtn" class="btn btn-danger">&#10007; Niet geweten</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Geweten:</span>
+                <span class="stat-value" id="knownCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Te leren:</span>
+                <span class="stat-value" id="unknownCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Score:</span>
+                <span class="stat-value" id="scorePercent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <script>// Automatisch gegenereerd uit PDF steekkaarten
+// Formaat: { front: "Vraag", back: "Antwoord" }
+
+const flashcardsData = {
+    dermatologie: [
+        { front: "Macula", back: "Vlakke, niet-palpabele kleurverandering van de huid.\n\nKenmerken:\n• -  kleurverandering zonder verhevenheid -  geen palpabele afwijking" },
+        { front: "Papula", back: "Vast, palpabel huidletsel < 1 cm.\n\nKenmerken:\n• -  palpabele verhevenheid -  geen vochtinhoud" },
+        { front: "Vesicula", back: "Met helder vocht gevulde blaas < 1 cm.\n\nKenmerken:\n• -  kleine met vocht gevulde blaas -  doorschijnend aspect" },
+        { front: "Bulla", back: "Met vocht gevulde blaar > 1 cm.\n\nKenmerken:\n• -  grote blaar met vocht -  dunne dakstructuur" },
+        { front: "Pustula", back: "Met pus gevulde blaas.\n\nKenmerken:\n• -  purulente inhoud -  inflammatoire rand" },
+        { front: "Squama", back: "Schilfering door versnelde verhoorning.\n\nKenmerken:\n• -  zichtbare schilfers -  droge huid" },
+        { front: "Erosie", back: "Oppervlakkig huiddefect zonder littekenvorming.\n\nKenmerken:\n• -  oppervlakkig defect -  geneest zonder litteken" },
+        { front: "Ulcus", back: "Diep huiddefect met weefselverlies.\n\nKenmerken:\n• -  diep defect -  littekenvorming na genezing" },
+        { front: "Eczeem", back: "Inflammatoire huidaandoening met gestoorde huidbarrière.\n\nKenmerken:\n• -  jeuk -  erytheem -  vesikels of schilfering" },
+        { front: "Contacteczeem", back: "Eczeem door contact met irriterende of allergene stoffen.\n\nKenmerken:\n• -  jeukende huidletsels -  begrensd tot contactplaats" },
+        { front: "Atopisch eczeem", back: "Chronisch recidiverend eczeem bij atopische constitutie.\n\nKenmerken:\n• -  jeuk -  droge huid -  familiale atopie" },
+        { front: "Psoriasis", back: "Chronische inflammatoire huidaandoening met versnelde epidermale celdeling.\n\nKenmerken:\n• -  erythemateuze plaques met zilverachtige schilfers -  typische lokalisatie" },
+        { front: "Acne vulgaris", back: "Ontsteking van haarfollikels en talgklieren.\n\nKenmerken:\n• -  comedonen -  papels en pustels -  gelaat en bovenrug" },
+        { front: "Urticaria", back: "Acute of chronische huidreactie door histaminevrijstelling.\n\nKenmerken:\n• -  jeukende kwaddels -  vluchtig karakter (<24u)" },
+        { front: "Erysipelas", back: "Acute bacteriële huidinfectie van de dermis.\n\nKenmerken:\n• -  scherp begrensd erytheem -  koorts -  warm en pijnlijk letsel" },
+        { front: "Impetigo", back: "Oppervlakkige bacteriële huidinfectie, vaak bij kinderen.\n\nKenmerken:\n• -  honinggele korsten -  vooral gelaat" },
+        { front: "Decubitus", back: "Lokale weefselschade door langdurige druk.\n\nKenmerken:\n• -  niet-wegdrukbare roodheid -  huiddefecten of necrose" },
+    ],
+    endocrinologie: [
+        { front: "Diabetes mellitus type 1", back: "Absoluut insulinetekort door auto-immuundestructie van β-cellen.\n\nKenmerken:\n• -  polyurie -  polydipsie -  onverklaard gewichtsverlies -  jonge leeftijd" },
+        { front: "Diabetes mellitus type 2", back: "Relatief insulinetekort door insulineresistentie.\n\nKenmerken:\n• -  chronische hyperglycemie -  overgewicht -  vermoeidheid" },
+        { front: "Hyperglycemie", back: "Verhoogde bloedglucosespiegel.\n\nKenmerken:\n• -  polyurie -  polydipsie -  wazig zien" },
+        { front: "Hypoglycemie", back: "Te lage bloedglucosespiegel.\n\nKenmerken:\n• -  zweten -  tremor -  verwardheid -  honger" },
+        { front: "Diabetische ketoacidose (DKA)", back: "Acute metabole ontregeling door insulinetekort met ketonvorming.\n\nKenmerken:\n• -  Kussmaul-ademhaling -  acetongeur -  misselijkheid en braken" },
+        { front: "Hypothyreoïdie", back: "Tekort aan schildklierhormonen.\n\nKenmerken:\n• -  koude-intolerantie -  traagheid -  gewichtstoename" },
+        { front: "Hyperthyreoïdie", back: "Overmaat aan schildklierhormonen.\n\nKenmerken:\n• -  gewichtsverlies -  warmte-intolerantie -  tachycardie -  tremor" },
+        { front: "Struma", back: "Vergroting van de schildklier.\n\nKenmerken:\n• -  zichtbare halszwelling -  drukgevoel" },
+        { front: "Syndroom van Cushing", back: "Overmatige blootstelling aan cortisol.\n\nKenmerken:\n• -  centrale obesitas -  vollemaansgezicht -  spierzwakte" },
+        { front: "Ziekte van Addison", back: "Primaire bijnierschorsinsufficiëntie.\n\nKenmerken:\n• -  hypotensie -  vermoeidheid -  hyperpigmentatie" },
+        { front: "SIADH", back: "Ongepaste secretie van ADH met waterretentie.\n\nKenmerken:\n• -  hyponatriëmie -  hoofdpijn en verwardheid" },
+        { front: "Diabetes insipidus", back: "Onvoldoende ADH-werking met verlies van verdunde urine.\n\nKenmerken:\n• -  polyurie -  polydipsie -  lage urine-osmolaliteit" },
+    ],
+    gastro: [
+        { front: "Dysfagie", back: "Stoornis in het slikproces ter hoogte van farynx of oesofagus.\n\nKenmerken:\n• -  moeite met slikken -  voedsel blijft steken" },
+        { front: "Odynofagie", back: "Pijnlijk slikken door inflammatie of ulceratie.\n\nKenmerken:\n• -  pijn bij slikken -  retrosternale pijn" },
+        { front: "Gastro-oesofageale refluxziekte (GERD)", back: "Chronische reflux van zure maaginhoud naar de slokdarm.\n\nKenmerken:\n• -  brandend maagzuur -  regurgitatie -  chronische hoest" },
+        { front: "Oesofagitis", back: "Ontsteking van het slokdarmslijmvlies.\n\nKenmerken:\n• -  dysfagie -  odynofagie" },
+        { front: "Gastritis", back: "Ontsteking van het maagslijmvlies.\n\nKenmerken:\n• -  epigastrische pijn -  nausea -  braken" },
+        { front: "Peptisch ulcus (maag/duodenum)", back: "Mucosadefect veroorzaakt door zuur- en pepsinewerking.\n\nKenmerken:\n• -  epigastrische pijn -  melena of hematemesis" },
+        { front: "Gastro-intestinale bloeding", back: "Bloedverlies vanuit het gastro-intestinaal stelsel.\n\nKenmerken:\n• -  hematemesis / melena / hematochezie -  anemie" },
+        { front: "Diarree", back: "Toename van stoelgangfrequentie en/of waterige stoelgang.\n\nKenmerken:\n• -  frequente waterige stoelgang -  dehydratie" },
+        { front: "Obstipatie", back: "Moeilijke of infrequente stoelgang.\n\nKenmerken:\n• -  harde, infrequente stoelgang -  opgeblazen gevoel" },
+        { front: "Steatorroe", back: "Vette stoelgang door gestoorde vetresorptie.\n\nKenmerken:\n• -  glanzende, sterk ruikende stoelgang -  gewichtsverlies" },
+        { front: "Levercirrose", back: "Diffuse fibrose en nodulaire herstructurering van de lever.\n\nKenmerken:\n• -  ascites -  portale hypertensie -  icterus" },
+        { front: "Portale hypertensie", back: "Verhoogde druk in het poortadersysteem.\n\nKenmerken:\n• -  ascites -  slokdarmvarices" },
+        { front: "Ascites", back: "Vochtophoping in de peritoneale holte.\n\nKenmerken:\n• -  opgezette buik -  dyspnee bij grote volumes" },
+        { front: "Hepatische encefalopathie", back: "Neuropsychiatrisch syndroom bij leverfalen.\n\nKenmerken:\n• -  verwardheid -  sufheid -  flapping tremor" },
+        { front: "Pancreatitis (acuut)", back: "Acute ontsteking van de pancreas.\n\nKenmerken:\n• -  hevige epigastrische pijn uitstralend naar de rug -  nausea en braken" },
+        { front: "Chronische pancreatitis", back: "Chronische inflammatie met irreversibele pancreasbeschadiging.\n\nKenmerken:\n• -  chronische pijn -  steatorroe -  diabetes" },
+        { front: "Maldigestie", back: "Onvoldoende afbraak van voedingsstoffen.\n\nKenmerken:\n• -  steatorroe -  gewichtsverlies" },
+        { front: "Malabsorptie", back: "Gestoorde opname van voedingsstoffen.\n\nKenmerken:\n• -  diarree -  vitaminetekorten" },
+    ],
+    respiratoir: [
+        { front: "Astma bronchiale", back: "Chronische inflammatoire luchtwegaandoening met reversibele bronchusobstructie.\n\nKenmerken:\n• -  aanvalsgewijze expiratoire dyspnee -  reversibiliteit van obstructie -  wheezing -" },
+        { front: "Status astmaticus", back: "Ernstige, aanhoudende astma-aanval die niet reageert op standaardtherapie.\n\nKenmerken:\n• -  ernstige dyspnee -  hypoxemie -  uitputting -  geen respons op" },
+        { front: "Chronische bronchitis", back: "Productieve hoest ≥ 3 maanden per jaar gedurende ≥ 2 opeenvolgende jaren.\n\nKenmerken:\n• -  chronische productieve hoest -  sputumproductie -  vooral ’s ochtends -" },
+        { front: "Longemfyseem", back: "Irreversibele verwijding van alveoli met verlies van elasticiteit.\n\nKenmerken:\n• -  progressieve dyspnee -  hyperinflatie -  tonvormige thorax -  weinig sputum" },
+        { front: "COPD", back: "Chronische obstructieve longziekte met irreversibele luchtwegobstructie.\n\nKenmerken:\n• -  persisterende dyspnee -  hoest en sputum -  verminderde inspanningstolerantie" },
+        { front: "ACO (Astma-COPD overlap)", back: "Mengbeeld van astma en COPD.\n\nKenmerken:\n• -  persisterende obstructie -  gedeeltelijke reversibiliteit" },
+        { front: "Pneumonie", back: "Infectieuze ontsteking van het longparenchym.\n\nKenmerken:\n• -  koorts -  productieve hoest met purulent sputum -  crepitaties -  thoracale pijn" },
+        { front: "Bronchopneumonie", back: "Pneumonie met multipele haardvormige ontstekingen.\n\nKenmerken:\n• -  koorts -  hoest -  diffuus beeld bij auscultatie" },
+        { front: "Atelectase", back: "Samenvallen van longweefsel.\n\nKenmerken:\n• -  verminderd ademgeruis -  hypoxemie -  dyspnee" },
+        { front: "Pneumothorax", back: "Lucht in de pleuraholte met longcollaps.\n\nKenmerken:\n• -  plotse dyspnee -  scherpe thoracale pijn -  hyperresonantie" },
+        { front: "Pleuritis", back: "Ontsteking van de pleura.\n\nKenmerken:\n• -  ademhalingsgebonden thoracale pijn -  oppervlakkige ademhaling" },
+        { front: "Pleuravocht (pleurale effusie)", back: "Abnormale vochtophoping in de pleuraholte.\n\nKenmerken:\n• -  verminderd ademgeruis -  thoracale druk" },
+        { front: "Longembool", back: "Acute obstructie van een longarterie door embolus.\n\nKenmerken:\n• -  plotse dyspnee -  thoracale pijn -  hemoptoë -  tachycardie" },
+        { front: "Longoedeem", back: "Vochtophoping in de alveoli.\n\nKenmerken:\n• -  acute dyspnee -  orthopnee -  schuimend roze sputum" },
+        { front: "Mucoviscidose (cystische fibrose)", back: "Autosomaal recessieve aandoening met taai slijm in exocriene klieren.\n\nKenmerken:\n• -  chronische productieve hoest -  recidiverende infecties -  bronchiectasieën -" },
+        { front: "Bronchiectasieën", back: "Irreversibele verwijding van bronchi.\n\nKenmerken:\n• -  chronisch purulent sputum -  recidiverende infecties" },
+        { front: "Longhypoplasie", back: "Onvolledige ontwikkeling van de longen.\n\nKenmerken:\n• -  respiratoire insufficiëntie bij geboorte -  cyanose" },
+        { front: "Bronchusatresie", back: "Aangeboren afsluiting van een bronchus.\n\nKenmerken:\n• -  lokaal hyperinflatoir longsegment -  recidiverende infecties" },
+        { front: "Hyperventilatiesyndroom", back: "Functionele ademhalingsstoornis met hypocapnie.\n\nKenmerken:\n• -  snelle diepe ademhaling -  tintelingen rond mond en vingers -  angstgevoel" },
+        { front: "Respiratoire insufficiëntie", back: "Onvoldoende gasuitwisseling voor metabole noden.\n\nKenmerken:\n• -  hypoxemie -  hypercapnie -  verwardheid" },
+        { front: "Cor pulmonale", back: "Rechterhartfalen secundair aan chronische longziekte.\n\nKenmerken:\n• -  perifere oedemen -  gestuwde halsvenen" },
+    ],
+    uronefrologie: [
+        { front: "Urineweginfectie (cystitis)", back: "Infectie van de lagere urinewegen, meestal bacterieel.\n\nKenmerken:\n• -  dysurie -  pollakisurie -  suprapubische pijn" },
+        { front: "Pyelonefritis", back: "Bacteriële infectie van nier en nierbekken.\n\nKenmerken:\n• -  koorts -  flankpijn -  algemeen ziek zijn -  misselijkheid en braken" },
+        { front: "Urosepsis", back: "Sepsis met oorsprong in de urinewegen.\n\nKenmerken:\n• -  koorts of hypothermie -  hypotensie -  verwardheid" },
+        { front: "Urolithiasis (nier- of urinestenen)", back: "Vorming van stenen in nieren of urinewegen.\n\nKenmerken:\n• -  hevige koliekpijn -  hematurie -  misselijkheid" },
+        { front: "Hydronefrose", back: "Verwijding van nierbekken door urineafvloeiingsbelemmering.\n\nKenmerken:\n• -  flankpijn -  verminderde urineproductie" },
+        { front: "Acute nierinsufficiëntie (ANI)", back: "Plotse daling van de nierfunctie.\n\nKenmerken:\n• -  oligurie of anurie -  stijging creatinine/ureum -  oedeem" },
+        { front: "Chronische nierinsufficiëntie (CNI)", back: "Progressief en irreversibel verlies van nierfunctie.\n\nKenmerken:\n• -  anemie -  hypertensie -  vermoeidheid" },
+        { front: "Nefrotisch syndroom", back: "Klinisch syndroom met proteïnurie > 3,5 g/dag.\n\nKenmerken:\n• -  massief oedeem -  hypoalbuminemie -  schuimende urine" },
+        { front: "Nefritisch syndroom", back: "Ontstekingssyndroom van de glomeruli.\n\nKenmerken:\n• -  hematurie -  hypertensie -  verminderde nierfunctie" },
+        { front: "Glomerulonefritis", back: "Ontsteking van de nierglomeruli.\n\nKenmerken:\n• -  hematurie -  proteïnurie -  oedeem" },
+        { front: "Postrenale obstructie", back: "Afvloedbelemmering van urine na de nieren.\n\nKenmerken:\n• -  anurie of oligurie -  blaasdistensie" },
+        { front: "Prostaatvergroting (BPH)", back: "Goedaardige vergroting van de prostaat.\n\nKenmerken:\n• -  zwakke urinestraal -  nadruppelen -  nycturie" },
+        { front: "Incontinentie", back: "Onvrijwillig urineverlies.\n\nKenmerken:\n• -  urineverlies -  urgency of stressgebonden verlies" },
+        { front: "Oligurie", back: "Verminderde urineproductie (< 400 ml/dag).\n\nKenmerken:\n• -  lage diurese" },
+        { front: "Anurie", back: "Afwezige urineproductie (< 100 ml/dag).\n\nKenmerken:\n• -  geen urineproductie" },
+    ],
+};
+
+// Application logic
+let currentCategory = 'dermatologie';
+let currentCards = [];
+let allCards = [];
+let currentIndex = 0;
+let knownCards = [];
+let unknownCards = [];
+let hideKnown = false;
+let totalCardsInCategory = 0;
+
+const flashcard = document.getElementById('flashcard');
+const frontContent = document.getElementById('frontContent');
+const backContent = document.getElementById('backContent');
+const categorySelect = document.getElementById('category');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const shuffleBtn = document.getElementById('shuffleBtn');
+const knowBtn = document.getElementById('knowBtn');
+const dontKnowBtn = document.getElementById('dontKnowBtn');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const knownCount = document.getElementById('knownCount');
+const unknownCount = document.getElementById('unknownCount');
+const scorePercent = document.getElementById('scorePercent');
+const hideKnownToggle = document.getElementById('hideKnownToggle');
+
+function init() {
+    try {
+        console.log('Initializing app...');
+        console.log('flashcardsData type:', typeof flashcardsData);
+        console.log('flashcardsData keys:', flashcardsData ? Object.keys(flashcardsData) : 'undefined');
+        loadCategory(currentCategory);
+        setupEventListeners();
+        console.log('App initialized successfully');
+    } catch (error) {
+        console.error('Error initializing app:', error);
+        alert('Error loading flashcards: ' + error.message);
+    }
+}
+
+function setupEventListeners() {
+    flashcard.addEventListener('click', flipCard);
+    categorySelect.addEventListener('change', handleCategoryChange);
+    prevBtn.addEventListener('click', previousCard);
+    nextBtn.addEventListener('click', nextCard);
+    shuffleBtn.addEventListener('click', shuffleCards);
+    knowBtn.addEventListener('click', markAsKnown);
+    dontKnowBtn.addEventListener('click', markAsUnknown);
+    hideKnownToggle.addEventListener('change', toggleHideKnown);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            flipCard();
+        } else if (e.key === 'ArrowLeft') {
+            previousCard();
+        } else if (e.key === 'ArrowRight') {
+            nextCard();
+        } else if (e.key === 'y' || e.key === 'j') {
+            markAsKnown();
+        } else if (e.key === 'n') {
+            markAsUnknown();
+        }
+    });
+}
+
+function loadCategory(category) {
+    console.log('Loading category:', category);
+    console.log('flashcardsData:', flashcardsData);
+    console.log('Available categories:', Object.keys(flashcardsData));
+    
+    currentCategory = category;
+    
+    if (!flashcardsData[category]) {
+        console.error('Category not found:', category);
+        frontContent.innerHTML = '<div style="text-align: center;">Categorie niet gevonden</div>';
+        backContent.innerHTML = '<div style="text-align: center;">Probeer de pagina te herladen</div>';
+        return;
+    }
+    
+    allCards = flashcardsData[category].slice();
+    console.log('Cards loaded:', allCards.length);
+    totalCardsInCategory = allCards.length;
+    applyFilter();
+    currentIndex = 0;
+    
+    // Reset known/unknown for new category
+    knownCards = knownCards.filter(function(id) { return id.indexOf(category + '-') !== 0; });
+    unknownCards = unknownCards.filter(function(id) { return id.indexOf(category + '-') !== 0; });
+    
+    if (currentCards.length === 0) {
+        frontContent.innerHTML = '<div style="text-align: center;">Geen kaarten beschikbaar</div>';
+        backContent.innerHTML = '<div style="text-align: center;">Voeg kaarten toe</div>';
+        return;
+    }
+    
+    console.log('Showing first card');
+    showCard(currentIndex);
+    updateProgress();
+    updateStats();
+}
+
+function applyFilter() {
+    if (hideKnown) {
+        currentCards = allCards.filter(function(card, index) {
+            var cardId = currentCategory + '-' + index;
+            return knownCards.indexOf(cardId) === -1;
+        });
+    } else {
+        currentCards = allCards.slice();
+    }
+    
+    if (currentIndex >= currentCards.length) {
+        currentIndex = Math.max(0, currentCards.length - 1);
+    }
+}
+
+function toggleHideKnown(e) {
+    hideKnown = e.target.checked;
+    applyFilter();
+    
+    if (currentCards.length === 0) {
+        frontContent.innerHTML = '<div style="text-align: center;">Alle kaarten zijn gekend! ðŸŽ‰</div>';
+        backContent.innerHTML = '<div style="text-align: center;">Goed gedaan!</div>';
+        updateProgress();
+    } else {
+        showCard(currentIndex);
+    }
+}
+
+function showCard(index) {
+    if (currentCards.length === 0) return;
+    
+    flashcard.classList.remove('flipped');
+    
+    var realIndex = allCards.indexOf(currentCards[index]);
+    var cardId = currentCategory + '-' + realIndex;
+    
+    if (knownCards.indexOf(cardId) !== -1) {
+        flashcard.classList.add('known');
+    } else {
+        flashcard.classList.remove('known');
+    }
+    
+    frontContent.innerHTML = '<div style="font-weight: bold;">' + escapeHtml(currentCards[index].front) + '</div>';
+    
+    var backText = currentCards[index].back;
+    backText = escapeHtml(backText).replace(/\n/g, '<br>');
+    backText = backText.replace(/Kenmerken:<br>/g, '<br><strong style="display: block; margin-top: 10px; margin-bottom: 5px;">Kenmerken:</strong>');
+    
+    backContent.innerHTML = backText;
+    updateProgress();
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function flipCard() {
+    flashcard.classList.toggle('flipped');
+}
+
+function nextCard() {
+    if (currentIndex < currentCards.length - 1) {
+        currentIndex++;
+        showCard(currentIndex);
+    }
+}
+
+function previousCard() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        showCard(currentIndex);
+    }
+}
+
+function handleCategoryChange(e) {
+    loadCategory(e.target.value);
+}
+
+function shuffleCards() {
+    for (let i = currentCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
+    }
+    currentIndex = 0;
+    if (currentCards.length > 0) {
+        showCard(currentIndex);
+    }
+}
+
+function markAsKnown() {
+    var realIndex = allCards.indexOf(currentCards[currentIndex]);
+    var cardId = currentCategory + '-' + realIndex;
+    if (knownCards.indexOf(cardId) === -1) {
+        knownCards.push(cardId);
+        var unknownIndex = unknownCards.indexOf(cardId);
+        if (unknownIndex > -1) {
+            unknownCards.splice(unknownIndex, 1);
+        }
+    }
+    
+    if (hideKnown) {
+        applyFilter();
+        if (currentCards.length === 0) {
+            frontContent.innerHTML = '<div style="text-align: center;">Alle kaarten zijn gekend! ðŸŽ‰</div>';
+            backContent.innerHTML = '<div style="text-align: center;">Goed gedaan!</div>';
+            flashcard.classList.remove('known');
+        } else {
+            if (currentIndex >= currentCards.length) {
+                currentIndex = currentCards.length - 1;
+            }
+            showCard(currentIndex);
+        }
+    } else {
+        flashcard.classList.add('known');
+        updateStats();
+        setTimeout(() => nextCard(), 300);
+    }
+    
+    updateStats();
+}
+
+function markAsUnknown() {
+    var realIndex = allCards.indexOf(currentCards[currentIndex]);
+    var cardId = currentCategory + '-' + realIndex;
+    if (unknownCards.indexOf(cardId) === -1) {
+        unknownCards.push(cardId);
+        var knownIndex = knownCards.indexOf(cardId);
+        if (knownIndex > -1) {
+            knownCards.splice(knownIndex, 1);
+        }
+    }
+    flashcard.classList.remove('known');
+    updateStats();
+    nextCard();
+}
+
+function updateProgress() {
+    var progress = ((currentIndex + 1) / currentCards.length) * 100;
+    progressFill.style.width = progress + '%';
+    progressText.textContent = (currentIndex + 1) + ' / ' + currentCards.length;
+}
+
+function updateStats() {
+    // Count known cards in current category
+    var knownInCategory = knownCards.filter(function(id) {
+        return id.indexOf(currentCategory + '-') === 0;
+    }).length;
+    
+    // Te leren = totaal - gekend
+    var toLearn = totalCardsInCategory - knownInCategory;
+    
+    knownCount.textContent = knownInCategory;
+    unknownCount.textContent = toLearn;
+    
+    var score = totalCardsInCategory > 0 ? Math.round((knownInCategory / totalCardsInCategory) * 100) : 0;
+    scorePercent.textContent = score + '%';
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
+    </script>
+</body>
+</html>
