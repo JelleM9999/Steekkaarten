@@ -50,21 +50,27 @@ h1 {
     justify-content: center;
     gap: 10px;
     margin-top: 15px;
+    flex-wrap: nowrap;
 }
 
 .category-selector label {
     font-weight: bold;
     color: #555;
+    font-size: clamp(0.85em, 2vw, 1em);
+    white-space: nowrap;
 }
 
 .category-selector select {
-    padding: 8px 15px;
+    padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 15px);
     border: 2px solid #667eea;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: clamp(0.85em, 2vw, 1em);
     cursor: pointer;
     background: white;
     color: #333;
+    min-width: 0;
+    flex: 1;
+    max-width: 200px;
 }
 
 .progress-bar {
@@ -101,7 +107,7 @@ h1 {
 
 .flashcard {
     width: 100%;
-    height: clamp(300px, 60vh, 400px);
+    height: clamp(250px, 45vh, 350px);
     cursor: pointer;
     position: relative;
     transition: all 0.3s ease;
@@ -174,11 +180,15 @@ h1 {
 .flashcard-front .card-content {
     text-align: center;
     align-items: center;
+    justify-content: center;
+    font-size: clamp(1.2em, 4vw, 2.5em);
+    font-weight: 500;
 }
 
 .flashcard-back .card-content {
     text-align: left;
     align-items: flex-start;
+    font-size: clamp(0.85em, 2.5vw, 1.2em);
 }
 
 .flip-hint {
@@ -276,25 +286,32 @@ h1 {
 .stats {
     display: flex;
     justify-content: space-around;
-    padding: 20px;
+    padding: clamp(12px, 2.5vw, 20px);
     background: #f5f5f5;
     border-radius: 10px;
+    gap: clamp(8px, 2vw, 15px);
+    flex-wrap: nowrap;
 }
 
 .stat-item {
     text-align: center;
+    flex: 1;
+    min-width: 0;
 }
 
 .stat-label {
     display: block;
-    font-size: 0.9em;
+    font-size: clamp(0.7em, 2vw, 0.9em);
     color: #666;
     margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .stat-value {
     display: block;
-    font-size: 1.5em;
+    font-size: clamp(1.2em, 3vw, 1.5em);
     font-weight: bold;
     color: #667eea;
 }
@@ -314,13 +331,21 @@ h1 {
     }
 
     .flashcard {
-        height: clamp(300px, 60vh, 380px);
+        height: clamp(220px, 40vh, 280px);
     }
 
     .card-content {
-        font-size: clamp(0.8em, 2.2vw, 1.1em);
         padding: 12px;
         justify-content: flex-start;
+    }
+
+    .flashcard-front .card-content {
+        font-size: clamp(1.1em, 3.5vw, 2em);
+        justify-content: center;
+    }
+
+    .flashcard-back .card-content {
+        font-size: clamp(0.75em, 2vw, 1em);
     }
 
     .controls {
@@ -345,24 +370,30 @@ h1 {
     }
 
     .stats {
-        flex-direction: column;
-        gap: 10px;
-        padding: 15px;
-    }
-
-    .stat-value {
-        font-size: 1.3em;
-    }
-
-    .category-selector {
-        flex-direction: column;
+        padding: 10px;
         gap: 8px;
     }
 
+    .stat-label {
+        font-size: 0.7em;
+    }
+
+    .stat-value {
+        font-size: 1.2em;
+    }
+
+    .category-selector {
+        gap: 8px;
+    }
+
+    .category-selector label {
+        font-size: 0.85em;
+    }
+
     .category-selector select {
-        width: 100%;
-        max-width: 250px;
-        font-size: 0.9em;
+        font-size: 0.85em;
+        padding: 6px 10px;
+        max-width: 160px;
     }
 
     .progress-bar {
